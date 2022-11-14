@@ -9,7 +9,6 @@ import (
 
 func main() {
 	r := gin.Default()
-
 	models.ConnectDatabase()
 
 	r.GET("/books", controllers.FindBooks)
