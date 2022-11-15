@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin-bookstore/models"
 	"net/http"
 
@@ -81,9 +82,28 @@ func UpdateBook(c *gin.Context) {
 		return
 	}
 
-	models.DB.Model(&book).Updates(input)
+	update := models.Book{Title: input.Title, Author: input.Author}
+	models.DB.Model(&book).Updates(&update)
 	c.JSON(http.StatusOK, gin.H{
 		"data": book,
+	})
+
+}
+
+func DeleteBook(c *gin.Context) {
+	var book models.Book
+
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Record Not Found!",
+		})
+		return
+	}
+
+	fmt.Println("BOOK Object to be deleted:", book)
+	models.DB.Delete(&book)
+	c.JSON(http.StatusOK, gin.H{
+		"data": true,
 	})
 
 }
